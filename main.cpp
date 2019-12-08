@@ -14,7 +14,7 @@ int main()
     test.print();
     test.next();
     test.print();
-    io << Term::Point(0,0);
+    io << Term::slp(2000) << Term::Point(0,0);
     test.spawn();
     test.next();
     test.print();
