@@ -10,9 +10,13 @@ std::string runFilePicker();
 void loadFile(std::string, Cell **&, int &, int &);
 void randGame(Cell **&, int &, int &);
 void printGrid(Cell **, int, int);
+void connectNeighbors(Cell **, int, int);
+void checkGrid(Cell **, int, int);
+void nextGen(Cell **, int, int);
 
 int main()
 {
+    Term::IO io;
     Cell **grid;
     int rows, cols;
     std::string mode = runMenu();
@@ -20,12 +24,24 @@ int main()
     {
         loadFile(runFilePicker(), grid, rows, cols);
         printGrid(grid, rows, cols);
+        nextGen(grid, rows, cols);
     }
     else if (mode == "random")
     {
         srand(time(NULL));
         randGame(grid, rows, cols);
         printGrid(grid, rows, cols);
+        nextGen(grid, rows, cols);
+    }
+    connectNeighbors(grid, rows, cols);
+
+    // run 1000 iterations, will add a menu option for this later
+    for (int i = 0; i < 1000; i++)
+    {
+        io << Term::sleep(250);
+        checkGrid(grid, rows, cols);
+        printGrid(grid, rows, cols);
+        nextGen(grid, rows, cols);
     }
 }
 
@@ -85,6 +101,7 @@ std::string runFilePicker()
 void printGrid(Cell **grid, int rows, int cols)
 {
     Term::IO io;
+    io << Term::clear << Term::Point(0, 0);
     for (int r = 0; r < rows; r++)
     {
         for (int c = 0; c < cols; c++)
@@ -134,6 +151,69 @@ void randGame(Cell **&grid, int &rows, int &cols)
             {
                 grid[r][c].spawn();
             }
+        }
+    }
+}
+
+void connectNeighbors(Cell **grid, int rows, int cols)
+{
+    for (int r = 0; r < rows; r++)
+    {
+        for (int c = 0; c < cols; c++)
+        {
+            // Define directions relative to the current cell
+            int up, down, left, right;
+            if (r == 0)
+            {
+                up = rows - 1;
+            }
+            else
+            {
+                up = r - 1;
+            }
+            down = (r + 1) % rows;
+            if (c == 0)
+            {
+                left = cols - 1;
+            }
+            else
+            {
+                left = c - 1;
+            }
+            right = (c + 1) % cols;
+            // Assign all 8 neighbors
+            grid[r][c].setNeighbors({
+                &grid[up][left],
+                &grid[up][c],
+                &grid[up][right],
+                &grid[r][left],
+                &grid[r][right],
+                &grid[down][left],
+                &grid[down][c],
+                &grid[down][right],
+            });
+        }
+    }
+}
+
+void checkGrid(Cell **grid, int rows, int cols)
+{
+    for (int r = 0; r < rows; r++)
+    {
+        for (int c = 0; c < cols; c++)
+        {
+            grid[r][c].check();
+        }
+    }
+}
+
+void nextGen(Cell **grid, int rows, int cols)
+{
+    for (int r = 0; r < rows; r++)
+    {
+        for (int c = 0; c < cols; c++)
+        {
+            grid[r][c].next();
         }
     }
 }
