@@ -96,6 +96,10 @@ void Cell::print()
     {
         io << Term::Color(Term::GREEN) << "█";
     }
+    else
+    {
+        io << Term::Color(Term::BLACK) << "█";
+    }
 }
 
 void Cell::setNeighbors(CellIList neighbors)
