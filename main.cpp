@@ -22,11 +22,12 @@ int main()
     int rows, cols;
     // Get the mode to run in (file or random)
     std::string mode = runModeMenu();
-    // Get the number of iterations to run through
-    int gens = runNumInput("Generations to View (if not stabilized)");
+    int gens;
     if (mode == "file")
     {
         loadFile(runFilePicker(), grid, rows, cols);
+        // Get the number of iterations to run through
+        gens = runNumInput("Generations to View (if not stabilized)");
         printGrid(grid, rows, cols);
         nextGen(grid, rows, cols);
     }
@@ -34,6 +35,8 @@ int main()
     {
         // Get the percentage to fill the random world
         int perc = runNumInput("Percent chance of a cell starting alive");
+        // Get the number of iterations to run through
+        gens = runNumInput("Generations to View (if not stabilized)");
         srand(time(NULL));
         randGame(grid, rows, cols, perc);
         printGrid(grid, rows, cols);
