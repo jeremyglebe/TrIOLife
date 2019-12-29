@@ -9,7 +9,7 @@ std::string runMenu();
 std::string runFilePicker();
 void loadFile(std::string, Cell **&, int &, int &);
 void randGame(Cell **&, int &, int &);
-void printGrid(Cell **, int, int);
+void printGrid(Cell **grid, int rows, int cols, bool skipStable = false);
 void connectNeighbors(Cell **, int, int);
 void checkGrid(Cell **, int, int);
 void nextGen(Cell **, int, int);
@@ -38,9 +38,9 @@ int main()
     // run 1000 iterations, will add a menu option for this later
     for (int i = 0; i < 1000; i++)
     {
-        io << Term::sleep(250);
+        io << Term::sleep(50);
         checkGrid(grid, rows, cols);
-        printGrid(grid, rows, cols);
+        printGrid(grid, rows, cols, true);
         nextGen(grid, rows, cols);
     }
 }
@@ -98,17 +98,19 @@ std::string runFilePicker()
     return file;
 }
 
-void printGrid(Cell **grid, int rows, int cols)
+void printGrid(Cell **grid, int rows, int cols, bool skipStable)
 {
     Term::IO io;
-    io << Term::clear << Term::Point(0, 0);
     for (int r = 0; r < rows; r++)
     {
         for (int c = 0; c < cols; c++)
         {
-            grid[r][c].print();
+            if (!skipStable || !grid[r][c].isStable())
+            {
+                io << Term::Point(r, c);
+                grid[r][c].print();
+            }
         }
-        io << '\n';
     }
 }
 

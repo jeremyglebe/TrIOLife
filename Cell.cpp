@@ -49,11 +49,17 @@ void Cell::check()
     return;
 }
 
+bool Cell::isStable()
+{
+    return stable;
+}
+
 void Cell::spawn()
 {
     if (!alive)
     {
         spawning = true;
+        stable = false;
     }
 }
 
@@ -62,6 +68,7 @@ void Cell::kill()
     if (alive)
     {
         dying = true;
+        stable = false;
     }
 }
 
@@ -79,16 +86,24 @@ void Cell::next()
         dying = false;
         alive = true;
     }
+    else
+    {
+        stable = true;
+    }
 }
 
-void Cell::print()
+void Cell::print(bool simple)
 {
     Term::IO io;
-    if (spawning)
+    // When using simple representation we will only use unique colors for
+    // alive or dead cells. When not using simple representation, we will also
+    // use unique colors for cells which are alive but dying, and cells which
+    // are dead but spawning.
+    if (spawning && !simple)
     {
         io << Term::Color(Term::WHITE) << "█";
     }
-    else if (dying)
+    else if (dying && !simple)
     {
         io << Term::Color(Term::RED) << "█";
     }
