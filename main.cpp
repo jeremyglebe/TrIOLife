@@ -5,7 +5,7 @@
 #include "Termio.h"
 #include "Cell.h"
 
-std::string runMenu();
+std::string runModeMenu();
 std::string runFilePicker();
 void loadFile(std::string, Cell **&, int &, int &);
 void randGame(Cell **&, int &, int &);
@@ -19,7 +19,7 @@ int main()
     Term::IO io;
     Cell **grid;
     int rows, cols;
-    std::string mode = runMenu();
+    std::string mode = runModeMenu();
     if (mode == "file")
     {
         loadFile(runFilePicker(), grid, rows, cols);
@@ -45,7 +45,7 @@ int main()
     }
 }
 
-std::string runMenu()
+std::string runModeMenu()
 {
     Term::IO io;
     std::string menuModel = "";
@@ -67,9 +67,15 @@ std::string runMenu()
     do
     {
         if (option == "random")
-            io << Term::Point(2, 3) << "☛" << Term::Point(3, 3) << " " << Term::Point(0, 0);
+        {
+            io << Term::Point(2, 0) << "┃  ☛ Random    ┃";
+            io << Term::Point(3, 0) << "┃    File      ┃" << Term::Point(0, 0);
+        }
         else if (option == "file")
-            io << Term::Point(2, 3) << " " << Term::Point(3, 3) << "☛" << Term::Point(0, 0);
+        {
+            io << Term::Point(2, 0) << "┃    Random    ┃";
+            io << Term::Point(3, 0) << "┃  ☛ File      ┃" << Term::Point(0, 0);
+        }
         io >> btn;
         if (option == "random" && btn == 's')
             option = "file";
