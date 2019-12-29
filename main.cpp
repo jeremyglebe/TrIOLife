@@ -7,8 +7,9 @@
 
 std::string runModeMenu();
 std::string runFilePicker();
+int runNumInput(std::string);
 void loadFile(std::string, Cell **&, int &, int &);
-void randGame(Cell **&, int &, int &);
+void randGame(Cell **&, int &, int &, int perc);
 void printGrid(Cell **grid, int rows, int cols, bool skipStable = false);
 void connectNeighbors(Cell **, int, int);
 void checkGrid(Cell **, int, int);
@@ -19,7 +20,10 @@ int main()
     Term::IO io;
     Cell **grid;
     int rows, cols;
+    // Get the mode to run in (file or random)
     std::string mode = runModeMenu();
+    // Get the number of iterations to run through
+    int gens = runNumInput("Generations to View (if not stabilized)");
     if (mode == "file")
     {
         loadFile(runFilePicker(), grid, rows, cols);
@@ -28,15 +32,17 @@ int main()
     }
     else if (mode == "random")
     {
+        // Get the percentage to fill the random world
+        int perc = runNumInput("Percent chance of a cell starting alive");
         srand(time(NULL));
-        randGame(grid, rows, cols);
+        randGame(grid, rows, cols, perc);
         printGrid(grid, rows, cols);
         nextGen(grid, rows, cols);
     }
     connectNeighbors(grid, rows, cols);
 
-    // run 1000 iterations, will add a menu option for this later
-    for (int i = 0; i < 1000; i++)
+    // run the generations
+    for (int i = 0; i < gens; i++)
     {
         io << Term::sleep(50);
         checkGrid(grid, rows, cols);
@@ -104,6 +110,30 @@ std::string runFilePicker()
     return file;
 }
 
+int runNumInput(std::string prompt)
+{
+    Term::IO io;
+    std::string menu = "";
+    int sz = prompt.size();
+    std::string borderFill = "";
+    for (int i = 0; i < sz; i++)
+    {
+        borderFill += "━";
+    }
+
+    menu += "┏━" + borderFill + "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n";
+    menu += "┃&60" + prompt + ":&00                              ┃\n";
+    menu += "┃ " + std::string(sz, ' ') + "&60‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾&00┃\n";
+    menu += "┗━" + borderFill + "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n";
+
+    int num;
+    io << Term::clear << Term::Point(0, 0) << menu;
+    io << Term::Point(1, 3 + sz);
+    std::cin >> num;
+    io << Term::clear << Term::Point(0, 0);
+    return num;
+}
+
 void printGrid(Cell **grid, int rows, int cols, bool skipStable)
 {
     Term::IO io;
@@ -144,7 +174,7 @@ void loadFile(std::string file, Cell **&grid, int &rows, int &cols)
     }
 }
 
-void randGame(Cell **&grid, int &rows, int &cols)
+void randGame(Cell **&grid, int &rows, int &cols, int perc)
 {
     rows = (rand() % 30) + 1;
     cols = (rand() % 80) + 1;
@@ -155,7 +185,7 @@ void randGame(Cell **&grid, int &rows, int &cols)
         grid[r] = new Cell[cols];
         for (int c = 0; c < cols; c++)
         {
-            if (rand() % 100 < 10)
+            if (rand() % 100 + 1 < perc)
             {
                 grid[r][c].spawn();
             }
