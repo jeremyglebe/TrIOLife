@@ -19,8 +19,8 @@ int main()
         loadFile(runFilePicker(), grid, rows, cols);
         // Get the number of iterations to run through
         gens = runNumInput("Generations to View (if not stabilized)");
-        printGrid(grid, rows, cols);
         nextGen(grid, rows, cols);
+        printGrid(grid, rows, cols);
     }
     else if (mode == "random")
     {
@@ -30,8 +30,8 @@ int main()
         gens = runNumInput("Generations to View (if not stabilized)");
         srand(time(NULL));
         randGame(grid, rows, cols, perc);
-        printGrid(grid, rows, cols);
         nextGen(grid, rows, cols);
+        printGrid(grid, rows, cols);
     }
     connectNeighbors(grid, rows, cols);
 
@@ -41,8 +41,8 @@ int main()
     {
         io << Term::sleep(50);
         stabilized = checkGrid(grid, rows, cols);
-        printGrid(grid, rows, cols, true);
         nextGen(grid, rows, cols);
+        printGrid(grid, rows, cols, true);
     }
 }
 
