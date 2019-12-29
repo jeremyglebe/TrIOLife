@@ -37,7 +37,7 @@ void randGame(Cell **&grid, int &rows, int &cols, int perc)
         grid[r] = new Cell[cols];
         for (int c = 0; c < cols; c++)
         {
-            if (rand() % 100 + 1 < perc)
+            if (rand() % 100 + 1 <= perc)
             {
                 grid[r][c].spawn();
             }

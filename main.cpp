@@ -36,10 +36,11 @@ int main()
     connectNeighbors(grid, rows, cols);
 
     // run the generations
-    for (int i = 0; i < gens; i++)
+    bool stabilized = false;
+    for (int i = 0; i < gens && !stabilized; i++)
     {
         io << Term::sleep(50);
-        checkGrid(grid, rows, cols);
+        stabilized = checkGrid(grid, rows, cols);
         printGrid(grid, rows, cols, true);
         nextGen(grid, rows, cols);
     }
@@ -102,15 +103,20 @@ void connectNeighbors(Cell **grid, int rows, int cols)
     }
 }
 
-void checkGrid(Cell **grid, int rows, int cols)
+bool checkGrid(Cell **grid, int rows, int cols)
 {
+    bool stable = true;
     for (int r = 0; r < rows; r++)
     {
         for (int c = 0; c < cols; c++)
         {
             grid[r][c].check();
+            if (!grid[r][c].isStable())
+                stable = false;
         }
     }
+    // return whether the entire grid is stable yet
+    return stable;
 }
 
 void nextGen(Cell **grid, int rows, int cols)
