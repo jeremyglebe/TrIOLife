@@ -28,8 +28,8 @@ void loadFile(std::string file, Cell **&grid, int &rows, int &cols)
 
 void randGame(Cell **&grid, int &rows, int &cols, int perc)
 {
-    rows = (rand() % 30) + 1;
-    cols = (rand() % 80) + 1;
+    rows = (rand() % 20) + 11;
+    cols = (rand() % 70) + 11;
 
     grid = new Cell *[rows];
     for (int r = 0; r < rows; r++)
