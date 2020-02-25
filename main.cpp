@@ -2,7 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include "Termio.h"
+#include "trio.hpp"
 #include "Cell.h"
 #include "TermioLife.h"
 

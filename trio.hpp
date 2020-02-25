@@ -21,9 +21,10 @@
 #else
 // Include only for *nix
 #include <unistd.h>
+#include <termios.h>
 #endif
 
-namespace Term
+namespace trio
 {
 
 using std::cout;
@@ -52,7 +53,7 @@ using std::wostream;
 */
 
 /**
- * TermIO Color codes, used to choose foreground and background
+ * TrIO Color codes, used to choose foreground and background
  * in the Color object
  */
 const unsigned short DEFAULT = 0;
@@ -70,6 +71,9 @@ inline string fuse(string left, string right, bool pad = false);
 
 /** Fuses multiple multi-line strings together for printing side-by-side. */
 inline string fuse(std::initializer_list<string> strings, bool pad = false);
+
+/** Fuses multiple multi-line strings together for printing side-by-side. */
+inline string fuse(std::vector<string> strings, bool pad = false);
 
 /** Split a string and store each new substring in a vector. */
 inline vector<string> split(string text, char delim, bool include = false);
@@ -133,7 +137,7 @@ typedef Command com;
 /**
  * CLEAR IS A SINGLETON: This means there is only ONE instance of the class.
  * The instance is defined by Clear::get() and there are two references to it
- * declared, Term::clear and Term::clr.
+ * declared, trio::clear and trio::clr.
  * The Clear object is a command which, when passed to an IO object, will
  * clear the terminal's screen using its call() method.
  */
@@ -152,7 +156,7 @@ static Clear &clr = Clear::get();
 /**
  * SLEEP IS A SINGLETON: This means there is only ONE instance of the class.
  * The instance is defined by Sleep::get() and there are two references to it
- * declared, Term::sleep and Term::slp.
+ * declared, trio::sleep and trio::slp.
  * The Sleep object is a command which, when passed to an IO object, will
  * make the program sleep for a time specified in the objects constructor.
  */
@@ -210,12 +214,14 @@ public:
     inline IO &operator<<(Command &command);
 
     // input operations
-
-    inline IO &operator>>(string &str_var);
-    inline IO &operator>>(char *&str_var);
     /** Gets a single character from stdin. Input is unbuffered, echoless,
      * blocking. For non-blocking, use a separate thread. */
+    inline IO &operator>>(unsigned char &ch_var);
     inline IO &operator>>(char &ch_var);
+    /** Gets a single key from stdin (characters or arrow keys). Input is
+     * unbuffered, echoless, blocking. For non-blocking, use a separate
+     * thread. */
+    inline IO &operator>>(char *&str_var);
 
 private:
     ostream *out;
@@ -230,7 +236,9 @@ private:
     inline void setupWindows();
 #endif
 };
-} // namespace Term
+} // namespace trio
+// For compatibility with older TrIO programs
+namespace Term = trio;
 
 /* ██╗███╗   ███╗██████╗ ██╗     ███████╗███╗   ███╗███████╗███╗   ██╗████████╗ █████╗ ████████╗██╗ ██████╗ ███╗   ██╗███████╗
  * ██║████╗ ████║██╔══██╗██║     ██╔════╝████╗ ████║██╔════╝████╗  ██║╚══██╔══╝██╔══██╗╚══██╔══╝██║██╔═══██╗████╗  ██║██╔════╝
@@ -260,7 +268,7 @@ private:
  * @param right the string that will be on the right half of the fused string
  * @param pad bool, whether to pad each line of the string to be the same width
  */
-std::string Term::fuse(string left, string right, bool pad)
+std::string trio::fuse(string left, string right, bool pad)
 {
     string result = "";
     // split the strings, create vectors
@@ -324,7 +332,7 @@ std::string Term::fuse(string left, string right, bool pad)
  * Initializer lists look like: {myStrVar, "Hello", "test", other_string_var}
  * @param pad bool, whether to pad each line of the string to be the same width
  */
-std::string Term::fuse(std::initializer_list<string> strings, bool pad)
+std::string trio::fuse(std::initializer_list<string> strings, bool pad)
 {
     // Variable for storing the resulting string
     string result = "";
@@ -340,6 +348,30 @@ std::string Term::fuse(std::initializer_list<string> strings, bool pad)
 }
 
 /**
+ * Fuses multiple multi-line strings together for printing side-by-side.
+ * 
+ * I didn't think you could create a dynamic intializer list, so I just
+ * filled a vector with strings ....
+ * 
+ * @param strings a vector of strings ordered left to right
+ * 
+ * @param pad bool, whether to pad each line of the string to be the same width
+ */
+std::string trio::fuse(std::vector<string> strings, bool pad)
+{
+    // Variable for storing the resulting string
+    string result = "";
+    // Moving the initializer_list into a vector b/c I think they're easier
+
+    // Loop through all strings and fuse them
+    for (int i = 0; i < strings.size(); i++)
+    {
+        result = fuse(result, strings[i], pad);
+    }
+    return result;
+}
+
+/**
  * Split a string and store each new substring in a vector.
  * @param text the original string
  * @param delim the delimiting character to split by
@@ -347,7 +379,7 @@ std::string Term::fuse(std::initializer_list<string> strings, bool pad)
  * returned substrings
  * @return vector containing each substring
  */
-std::vector<std::string> Term::split(string text, char delim, bool include)
+std::vector<std::string> trio::split(string text, char delim, bool include)
 {
     // Just calls the regular expression split but delimeter does not have to be
     // a regular expression
@@ -366,7 +398,7 @@ std::vector<std::string> Term::split(string text, char delim, bool include)
  * returned substrings
  * @return vector containing each substring
  */
-std::vector<std::string> Term::rsplit(string text, string delim, bool include)
+std::vector<std::string> trio::rsplit(string text, string delim, bool include)
 {
     std::vector<std::string> elems;
     std::regex rgx(delim);
@@ -416,7 +448,7 @@ std::vector<std::string> Term::rsplit(string text, string delim, bool include)
  * @param to the new string to replace it with
  * @return the updated main string
  */
-std::string Term::replace_all(string text, string from, string to)
+std::string trio::replace_all(string text, string from, string to)
 {
     size_t start_pos = 0;
     // While we can find the substring "from"
@@ -440,7 +472,7 @@ std::string Term::replace_all(string text, string from, string to)
  * @param text the text to be converted to a wstring
  * @return the same wostream being used (for chaining output statements)
  */
-std::wostream &Term::operator<<(wostream &wout, string text)
+std::wostream &trio::operator<<(wostream &wout, string text)
 {
     /**
      * create a string <-> wide string converter
@@ -467,9 +499,9 @@ std::wostream &Term::operator<<(wostream &wout, string text)
  * http://patorjk.com/software/taag/
  */
 
-Term::Sleep::Sleep() {}
+trio::Sleep::Sleep() {}
 
-Term::Sleep &Term::Sleep::get()
+trio::Sleep &trio::Sleep::get()
 {
     static Sleep instance;
     return instance;
@@ -481,7 +513,7 @@ Term::Sleep &Term::Sleep::get()
  * @param ms how much time, in miliseconds (1/1000 of a second), the
  * program should sleep when this object is passed to an IO object.
  */
-Term::Sleep &Term::Sleep::operator()(int ms)
+trio::Sleep &trio::Sleep::operator()(int ms)
 {
     this->ms = ms;
     return get();
@@ -489,20 +521,20 @@ Term::Sleep &Term::Sleep::operator()(int ms)
 
 /** Stops the thread (or program, if single-threaded) for a number of
  * milliseconds determined by the data member of this object. */
-void Term::Sleep::call()
+void trio::Sleep::call()
 {
     std::this_thread::sleep_for(std::chrono::milliseconds(ms));
 }
 
-Term::Clear::Clear() {}
+trio::Clear::Clear() {}
 
-Term::Clear &Term::Clear::get()
+trio::Clear &trio::Clear::get()
 {
     static Clear instance;
     return instance;
 }
 
-void Term::Clear::call()
+void trio::Clear::call()
 {
 #if defined(WINDOWS)
     // The Windows version of this method comes almost character-for-character
@@ -553,7 +585,7 @@ void Term::Clear::call()
  * @param row the row where the point is positioned
  * @param col the column where the point is positioned
  */
-Term::Point::Point(const unsigned short &row, const unsigned short &col)
+trio::Point::Point(const unsigned short &row, const unsigned short &col)
 {
     this->row = row;
     this->col = col;
@@ -575,7 +607,7 @@ Term::Point::Point(const unsigned short &row, const unsigned short &col)
  * @param fg color code for the foreground
  * @param bg color code for the background
  */
-Term::Color::Color(const unsigned short &fg, const unsigned short &bg)
+trio::Color::Color(const unsigned short &fg, const unsigned short &bg)
 {
     this->fg = fg;
     this->bg = bg;
@@ -591,7 +623,7 @@ Term::Color::Color(const unsigned short &fg, const unsigned short &bg)
  * http://patorjk.com/software/taag/
  */
 
-Term::IO::IO()
+trio::IO::IO()
 {
 #if defined(WINDOWS)
     windows_setup = false;
@@ -622,9 +654,13 @@ Term::IO::IO()
  * @param ch_var the variable to read a character into
  * @return this object (for chaining inputs)
  */
-Term::IO &Term::IO::operator>>(char &ch_var)
+trio::IO &trio::IO::operator>>(unsigned char &ch_var)
 {
 #if defined(WINDOWS)
+    // Setup Windows if we haven't yet.
+    if (!windows_setup)
+        setupWindows();
+
     // Keeps track of the console mode we started with
     DWORD mode;
     // Get the current mode so we can restore it later
@@ -632,19 +668,52 @@ Term::IO &Term::IO::operator>>(char &ch_var)
     // Set the console mode to unbuffered and echoless
     SetConsoleMode(stdin_terminal, 0);
 
-    ch_var = std::cin.get();
+    //ch_var = std::cin.get();
+    DWORD cc;
+    TCHAR c = 0;
+    ReadConsole(stdin_terminal, &c, 1, &cc, NULL);
+    ch_var = (unsigned char)c;
 
     // Restore the original console mode
     SetConsoleMode(stdin_terminal, mode);
 #else
-    // turn off echo and get the input without a buffer
-    system("stty -brkint -ignpar -istrip -icrnl -ixon -opost -isig -icanon -echo");
-    // get the next stdin character
-    //key = getchar();
-    std::cin >> ch_var;
-    // set the terminal back to buffered input and echo
-    system("stty cooked echo");
+
+    // borrowed from anonymous stackoverflow user at
+    // https://stackoverflow.com/questions/421860/capture-characters-from-standard-input-without-waiting-for-enter-to-be-pressed
+    char buf = 0;
+    struct termios old = {0};
+    if (tcgetattr(0, &old) < 0)
+            perror("tcsetattr()");
+    old.c_lflag &= ~ICANON;
+    old.c_lflag &= ~ECHO;
+    old.c_cc[VMIN] = 1;
+    old.c_cc[VTIME] = 0;
+    if (tcsetattr(0, TCSANOW, &old) < 0)
+            perror("tcsetattr ICANON");
+    if (read(0, &buf, 1) < 0)
+            perror ("read()");
+    old.c_lflag |= ICANON;
+    old.c_lflag |= ECHO;
+    if (tcsetattr(0, TCSADRAIN, &old) < 0)
+            perror ("tcsetattr ~ICANON");
+    ch_var = buf;
+
 #endif
+    return *this;
+}
+
+/**
+ * Gets a single character from stdin.
+ * Input is unbuffered, echoless, blocking. For non-blocking, use a
+ * separate thread.
+ * @param ch_var the variable to read a character into 
+ * @return this object (for chaining inputs)
+ */
+trio::IO &trio::IO::operator>>(char &ch_var)
+{
+    unsigned char temp;
+    *this >> temp;
+    ch_var = (char)temp;
     return *this;
 }
 
@@ -665,7 +734,7 @@ Term::IO &Term::IO::operator>>(char &ch_var)
  * @param text the string to print to the terminal
  * @return a reference to this IO object, to account for chained outputs
  */
-Term::IO &Term::IO::operator<<(string text)
+trio::IO &trio::IO::operator<<(string text)
 {
 #if defined(WINDOWS)
     // Setup Windows if we haven't yet.
@@ -674,7 +743,7 @@ Term::IO &Term::IO::operator<<(string text)
 #endif
 
     // Reset the color on every new line, easiest way to do this is just to
-    // replace every '\n' with '&00\n' (using the Termio color escapes)
+    // replace every '\n' with '&00\n' (using the TrIO color escapes)
     text = replace_all(text, "\n", "&00\n");
 
     // Replace every instance of "&&" with, where X represents an
@@ -737,8 +806,14 @@ Term::IO &Term::IO::operator<<(string text)
  * @param letter the character to print to the terminal
  * @return a reference to this IO object, to account for chained outputs
  */
-Term::IO &Term::IO::operator<<(const char &letter)
+trio::IO &trio::IO::operator<<(const char &letter)
 {
+#if defined(WINDOWS)
+    // Setup Windows if we haven't yet.
+    if (!windows_setup)
+        setupWindows();
+#endif
+
     if (wide)
     {
         *wout << letter;
@@ -755,8 +830,14 @@ Term::IO &Term::IO::operator<<(const char &letter)
  * @param number the integer to print to the terminal
  * @return a reference to this IO object, to account for chained outputs
  */
-Term::IO &Term::IO::operator<<(const int &number)
+trio::IO &trio::IO::operator<<(const int &number)
 {
+#if defined(WINDOWS)
+    // Setup Windows if we haven't yet.
+    if (!windows_setup)
+        setupWindows();
+#endif
+
     if (wide)
     {
         *wout << number;
@@ -773,8 +854,14 @@ Term::IO &Term::IO::operator<<(const int &number)
  * @param number the double to print to the terminal
  * @return a reference to this IO object, to account for chained outputs
  */
-Term::IO &Term::IO::operator<<(const double &number)
+trio::IO &trio::IO::operator<<(const double &number)
 {
+#if defined(WINDOWS)
+    // Setup Windows if we haven't yet.
+    if (!windows_setup)
+        setupWindows();
+#endif
+
     if (wide)
     {
         *wout << number;
@@ -804,7 +891,7 @@ Term::IO &Term::IO::operator<<(const double &number)
  * @param point the Point containing the row/column to move to
  * @return this object, for chaining outputs.
  */
-Term::IO &Term::IO::operator<<(const Point &point)
+trio::IO &trio::IO::operator<<(const Point &point)
 {
 #if defined(WINDOWS)
     if (!windows_setup)
@@ -831,10 +918,10 @@ Term::IO &Term::IO::operator<<(const Point &point)
  * Changes the color of the terminal to the foreground and
  * background specified by the Color object.
  * @param color a Color object containing a foreground and background code
- * (codes are specified in Termio.h near the top of the file)
+ * (codes are specified in trio.hpp near the top of the file)
  * @return this object, for chaining outputs.
  */
-Term::IO &Term::IO::operator<<(const Color &color)
+trio::IO &trio::IO::operator<<(const Color &color)
 {
     set_color(color);
     return *this;
@@ -845,13 +932,13 @@ Term::IO &Term::IO::operator<<(const Color &color)
  * @param command the command to use .call() on.
  * @return this object, for chaining outputs.
  */
-Term::IO &Term::IO::operator<<(Command &command)
+trio::IO &trio::IO::operator<<(Command &command)
 {
     command.call();
     return *this;
 }
 
-void Term::IO::set_color(Color c)
+void trio::IO::set_color(Color c)
 {
 #if defined(WINDOWS)
     static const unsigned short _fg[] = {7, 0, 4, 6, 2, 1, 3, 5, 7};
@@ -878,7 +965,7 @@ void Term::IO::set_color(Color c)
 }
 
 #if defined(WINDOWS)
-void Term::IO::setupWindows()
+void trio::IO::setupWindows()
 {
     // If we're using windows and it has not yet been fixed
     if (!windows_setup)
