@@ -1,3 +1,0 @@
-language = "cpp"
-  run = "g++ *.cpp -o GoL.exe && ./GoL.exe"
-  

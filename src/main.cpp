@@ -4,7 +4,7 @@
 #include <string>
 #include "trio.hpp"
 #include "Cell.h"
-#include "TermioLife.h"
+#include "TrIOLife.h"
 
 int main()
 {
@@ -32,6 +32,9 @@ int main()
         randGame(grid, rows, cols, perc);
         printGrid(grid, rows, cols);
         nextGen(grid, rows, cols);
+    }
+    else {
+        exit(1);
     }
     connectNeighbors(grid, rows, cols);
     io << Term::Point(rows, 0) << "Gen #1";
