@@ -3,7 +3,7 @@
 
 std::string runModeMenu()
 {
-    Term::IO io;
+    trio::IO io;
     std::string menuModel = "";
     menuModel += "┏━━━━━━━━━━━━━━┓\n";
     menuModel += "┃ &40Game of Life&00 ┃\n";
@@ -19,18 +19,18 @@ std::string runModeMenu()
 
     char btn;
     std::string option = "random";
-    io << Term::clear << Term::Point(0, 0) << menuModel;
+    io.clear() << trio::Point(0, 0) << menuModel;
     do
     {
         if (option == "random")
         {
-            io << Term::Point(2, 0) << "┃  ☛ Random    ┃";
-            io << Term::Point(3, 0) << "┃    File      ┃" << Term::Point(0, 0);
+            io << trio::Point(2, 0) << "┃  ☛ Random    ┃";
+            io << trio::Point(3, 0) << "┃    File      ┃" << trio::Point(0, 0);
         }
         else if (option == "file")
         {
-            io << Term::Point(2, 0) << "┃    Random    ┃";
-            io << Term::Point(3, 0) << "┃  ☛ File      ┃" << Term::Point(0, 0);
+            io << trio::Point(2, 0) << "┃    Random    ┃";
+            io << trio::Point(3, 0) << "┃  ☛ File      ┃" << trio::Point(0, 0);
         }
         io >> btn;
         if (option == "random" && btn == 's')
@@ -38,13 +38,13 @@ std::string runModeMenu()
         if (option == "file" && btn == 'w')
             option = "random";
     } while (btn != ' ');
-    io << Term::clear << Term::Point(0, 0);
+    io.clear() << trio::Point(0, 0);
     return option;
 }
 
 std::string runFilePicker()
 {
-    Term::IO io;
+    trio::IO io;
     std::string menuModel = "";
 
     menuModel += "┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓\n";
@@ -53,16 +53,16 @@ std::string runFilePicker()
     menuModel += "┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n";
 
     std::string file;
-    io << Term::clear << Term::Point(0, 0) << menuModel;
-    io << Term::Point(1, 18);
+    io.clear() << trio::Point(0, 0) << menuModel;
+    io << trio::Point(1, 18);
     std::cin >> file;
-    io << Term::clear << Term::Point(0, 0);
+    io.clear() << trio::Point(0, 0);
     return file;
 }
 
 int runNumInput(std::string prompt)
 {
-    Term::IO io;
+    trio::IO io;
     std::string menu = "";
     int sz = prompt.size();
     std::string borderFill = "";
@@ -77,9 +77,9 @@ int runNumInput(std::string prompt)
     menu += "┗━" + borderFill + "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛\n";
 
     int num;
-    io << Term::clear << Term::Point(0, 0) << menu;
-    io << Term::Point(1, 3 + sz);
+    io.clear() << trio::Point(0, 0) << menu;
+    io << trio::Point(1, 3 + sz);
     std::cin >> num;
-    io << Term::clear << Term::Point(0, 0);
+    io.clear() << trio::Point(0, 0);
     return num;
 }

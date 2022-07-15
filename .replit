@@ -1,0 +1,4 @@
+language = "cpp"
+compile = "g++ src/*.cpp -o TrIOLife.out"
+run = "./TrIOLife.out"
+hidden = ["TrIOLife.out"]

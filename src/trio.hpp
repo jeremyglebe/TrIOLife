@@ -27,215 +27,187 @@
 namespace trio
 {
 
-using std::cout;
-using std::ostream;
-using std::string;
-using std::to_string;
-using std::vector;
-using std::wcout;
-using std::wostream;
+    using std::cout;
+    using std::ostream;
+    using std::string;
+    using std::to_string;
+    using std::vector;
+    using std::wcout;
+    using std::wostream;
 
-/* ██████╗ ██████╗  ██████╗ ████████╗ ██████╗ ████████╗██╗   ██╗██████╗ ███████╗███████╗       
- * ██╔══██╗██╔══██╗██╔═══██╗╚══██╔══╝██╔═══██╗╚══██╔══╝╚██╗ ██╔╝██╔══██╗██╔════╝██╔════╝       
- * ██████╔╝██████╔╝██║   ██║   ██║   ██║   ██║   ██║    ╚████╔╝ ██████╔╝█████╗  ███████╗       
- * ██╔═══╝ ██╔══██╗██║   ██║   ██║   ██║   ██║   ██║     ╚██╔╝  ██╔═══╝ ██╔══╝  ╚════██║       
- * ██║     ██║  ██║╚██████╔╝   ██║   ╚██████╔╝   ██║      ██║   ██║     ███████╗███████║       
- * ╚═╝     ╚═╝  ╚═╝ ╚═════╝    ╚═╝    ╚═════╝    ╚═╝      ╚═╝   ╚═╝     ╚══════╝╚══════╝       
- *                                                                                            
- *    ██╗        ██████╗ ██████╗ ███╗   ██╗███████╗████████╗ █████╗ ███╗   ██╗████████╗███████╗
- *    ██║       ██╔════╝██╔═══██╗████╗  ██║██╔════╝╚══██╔══╝██╔══██╗████╗  ██║╚══██╔══╝██╔════╝
- * ████████╗    ██║     ██║   ██║██╔██╗ ██║███████╗   ██║   ███████║██╔██╗ ██║   ██║   ███████╗
- * ██╔═██╔═╝    ██║     ██║   ██║██║╚██╗██║╚════██║   ██║   ██╔══██║██║╚██╗██║   ██║   ╚════██║
- * ██████║      ╚██████╗╚██████╔╝██║ ╚████║███████║   ██║   ██║  ██║██║ ╚████║   ██║   ███████║
- * ╚═════╝       ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═══╝   ╚═╝   ╚══════╝
- * ANSI Shadow font
- * http://patorjk.com/software/taag/
-*/
+    /* ██████╗ ██████╗  ██████╗ ████████╗ ██████╗ ████████╗██╗   ██╗██████╗ ███████╗███████╗       
+     * ██╔══██╗██╔══██╗██╔═══██╗╚══██╔══╝██╔═══██╗╚══██╔══╝╚██╗ ██╔╝██╔══██╗██╔════╝██╔════╝       
+     * ██████╔╝██████╔╝██║   ██║   ██║   ██║   ██║   ██║    ╚████╔╝ ██████╔╝█████╗  ███████╗       
+     * ██╔═══╝ ██╔══██╗██║   ██║   ██║   ██║   ██║   ██║     ╚██╔╝  ██╔═══╝ ██╔══╝  ╚════██║       
+     * ██║     ██║  ██║╚██████╔╝   ██║   ╚██████╔╝   ██║      ██║   ██║     ███████╗███████║       
+     * ╚═╝     ╚═╝  ╚═╝ ╚═════╝    ╚═╝    ╚═════╝    ╚═╝      ╚═╝   ╚═╝     ╚══════╝╚══════╝       
+     *                                                                                            
+     *    ██╗        ██████╗ ██████╗ ███╗   ██╗███████╗████████╗ █████╗ ███╗   ██╗████████╗███████╗
+     *    ██║       ██╔════╝██╔═══██╗████╗  ██║██╔════╝╚══██╔══╝██╔══██╗████╗  ██║╚══██╔══╝██╔════╝
+     * ████████╗    ██║     ██║   ██║██╔██╗ ██║███████╗   ██║   ███████║██╔██╗ ██║   ██║   ███████╗
+     * ██╔═██╔═╝    ██║     ██║   ██║██║╚██╗██║╚════██║   ██║   ██╔══██║██║╚██╗██║   ██║   ╚════██║
+     * ██████║      ╚██████╗╚██████╔╝██║ ╚████║███████║   ██║   ██║  ██║██║ ╚████║   ██║   ███████║
+     * ╚═════╝       ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═══╝   ╚═╝   ╚══════╝
+     * ANSI Shadow font
+     * http://patorjk.com/software/taag/
+     */
 
-/**
- * TrIO Color codes, used to choose foreground and background
- * in the Color object
- */
-const unsigned short DEFAULT = 0;
-const unsigned short BLACK = 1;
-const unsigned short RED = 2;
-const unsigned short YELLOW = 3;
-const unsigned short GREEN = 4;
-const unsigned short BLUE = 5;
-const unsigned short CYAN = 6;
-const unsigned short MAGENTA = 7;
-const unsigned short WHITE = 8;
+    /**
+     * TrIO Color codes, used to choose foreground and background
+     * in the Color object
+     */
+    enum ColorCodes
+    {
+        DEFAULT, // Code: 0
+        BLACK,   // Code: 1
+        RED,     // Code: 2
+        YELLOW,  // Code: 3
+        GREEN,   // Code: 4
+        BLUE,    // Code: 5
+        CYAN,    // Code: 6
+        MAGENTA, // Code: 7
+        WHITE    // Code: 8
+    };
 
-/** Fuses two multi-line string together for printing side-by-side */
-inline string fuse(string left, string right, bool pad = false);
+    /** Fuses two multi-line string together for printing side-by-side */
+    inline string fuse(string left, string right, bool pad = false);
 
-/** Fuses multiple multi-line strings together for printing side-by-side. */
-inline string fuse(std::initializer_list<string> strings, bool pad = false);
+    /** Fuses multiple multi-line strings together for printing side-by-side. */
+    inline string fuse(std::initializer_list<string> strings, bool pad = false);
 
-/** Fuses multiple multi-line strings together for printing side-by-side. */
-inline string fuse(std::vector<string> strings, bool pad = false);
+    /** Fuses multiple multi-line strings together for printing side-by-side. */
+    inline string fuse(std::vector<string> strings, bool pad = false);
 
-/** Split a string and store each new substring in a vector. */
-inline vector<string> split(string text, char delim, bool include = false);
+    /** Split a string and store each new substring in a vector. */
+    inline vector<string> split(string text, char delim, bool include = false);
 
-/** Split a string, using a regular expression as a delimeter, and store
- * each new substring in a vector. */
-inline vector<string> rsplit(string text, string delim, bool include = false);
+    /**
+     * Split a string, using a regular expression as a delimeter, and store
+     * each new substring in a vector.
+     */
+    inline vector<string> rsplit(string text, string delim, bool include = false);
 
-/** Replaces all instances of a substring in a text with a new string. */
-inline string replace_all(string text, string from, string to);
+    /** Replaces all instances of a substring in a text with a new string. */
+    inline string replace_all(string text, string from, string to);
 
-/** It is easier to consistently pass in strings instead of keeping track of
- * wide vs narrow strings. So, we will overload << to make wostreams able to
- * work with strings (by converting them inside the operation to wstring) */
-inline std::wostream &operator<<(wostream &wout, string text);
+    /** Sleeps the thread for some time (waits time before continuing) */
+    inline void sleep_ms(int ms);
 
-/**
- * A Point object is used to move the cursor on the terminal.
- * When sent into an IO object, the cursor will change to the Point's
- * row and column position
- */
-class Point
-{
-public:
-    unsigned short row;
-    unsigned short col;
-    /** Creates a point */
-    inline Point(const unsigned short &row, const unsigned short &col);
-};
-typedef Point pnt;
-typedef Point p;
+    /** Clears all the text in the terminal */
+    inline void clear_screen();
 
-/**
- * A Color object is used to color the strings being sent to the terminal.
- * When sent to an IO object, the terminal will begin using the specified
- * foreground and background colors from the Color object.
- */
-class Color
-{
-public:
-    unsigned short fg;
-    unsigned short bg;
-    /** Creates a Color object */
-    inline Color(const unsigned short &fg, const unsigned short &bg = 0);
-};
-typedef Color col;
+    /**
+     * It is easier to consistently pass in strings instead of keeping track of
+     * wide vs narrow strings. So, we will overload << to make wostreams able to
+     * work with strings (by converting them inside the operation to wstring)
+     */
+    inline std::wostream &operator<<(wostream &wout, string text);
 
-/**
- * Commands are objects which when sent to an IO object should run some
- * function.
- * Their function is stored as the call() method. Commands should be unique
- * inherited classes of this super-class and should override call().
- */
-class Command
-{
-public:
-    virtual void call() = 0;
-};
-typedef Command com;
+    /**
+     * A Point object is used to move the cursor on the terminal.
+     * When sent into an IO object, the cursor will change to the Point's
+     * row and column position
+     */
+    class Point
+    {
+    public:
+        unsigned short row;
+        unsigned short col;
+        /** Creates a point */
+        inline Point(const unsigned short &row, const unsigned short &col);
+    };
+    typedef Point pnt;
+    typedef Point p;
 
-/**
- * CLEAR IS A SINGLETON: This means there is only ONE instance of the class.
- * The instance is defined by Clear::get() and there are two references to it
- * declared, trio::clear and trio::clr.
- * The Clear object is a command which, when passed to an IO object, will
- * clear the terminal's screen using its call() method.
- */
-class Clear : public Command
-{
-public:
-    inline static Clear &get();
-    inline void call() override;
+    /**
+     * A Color object is used to color the strings being sent to the terminal.
+     * When sent to an IO object, the terminal will begin using the specified
+     * foreground and background colors from the Color object.
+     */
+    class Color
+    {
+    public:
+        unsigned short fg;
+        unsigned short bg;
+        /** Creates a Color object */
+        inline Color(const unsigned short &fg, const unsigned short &bg = 0);
+    };
+    typedef Color col;
 
-private:
-    inline Clear();
-};
-static Clear &clear = Clear::get();
-static Clear &clr = Clear::get();
+    /**
+     * Main input/output control for the library. Can use various other objects to
+     * print, colorize, get input, and various screen functions.
+     */
+    class IO
+    {
+    public:
+        // constructors
+        inline IO();
+        inline IO(ostream &out);
+        inline IO(wostream &wout);
 
-/**
- * SLEEP IS A SINGLETON: This means there is only ONE instance of the class.
- * The instance is defined by Sleep::get() and there are two references to it
- * declared, trio::sleep and trio::slp.
- * The Sleep object is a command which, when passed to an IO object, will
- * make the program sleep for a time specified in the objects constructor.
- */
-class Sleep : public Command
-{
-public:
-    inline static Sleep &get();
-    /** Stops the thread (or program, if single-threaded) for a number of
-     * milliseconds determined by the data member of this object. */
-    inline void call() override;
-    /** Sets how many ms the thread should sleep when
-     * using the sleep object. */
-    inline Sleep &operator()(int ms);
+        // output operations
+        /**
+         * Prints a string to the terminal and interprets
+         * any color codes found
+         */
+        inline IO &operator<<(string text);
+        /** Prints a character to the terminal */
+        inline IO &operator<<(const char &letter);
+        /** Prints an integer to the terminal */
+        inline IO &operator<<(const int &number);
+        /** Prints a double to the terminal */
+        inline IO &operator<<(const double &number);
 
-private:
-    unsigned int ms;
-    inline Sleep();
-};
-static Sleep &sleep = Sleep::get();
-static Sleep &slp = Sleep::get();
+        // special output operations
+        /**
+         * Moves the terminal's cursor to a row/column specified
+         * by a Point object.
+         */
+        inline IO &operator<<(const Point &point);
+        /**
+         * Changes the color of the terminal to the foreground and
+         * background specified by the Color object.
+         */
+        inline IO &operator<<(const Color &color);
+        /**
+         * Calls sleep_ms and returns IO object which allows us
+         * to include waiting in output chains
+         */
+        inline IO &sleep(int ms);
+        /**
+         * Calls clear_terminal and returns IO object which allows us
+         * to include screen clearing in output chains
+         */
+        inline IO &clear();
 
-/**
- * Main input/output control for the library. Can use various other objects to
- * print, colorize, get input, and various screen functions.
- */
-class IO
-{
-public:
-    // constructors
+        // input operations
+        /**
+         * Gets a single character from stdin. Input is unbuffered, echoless,
+         * blocking. For non-blocking, use a separate thread.
+         */
+        inline IO &operator>>(unsigned char &ch_var);
+        inline IO &operator>>(char &ch_var);
+        /**
+         * Gets a single key from stdin (characters or arrow keys). Input is
+         * unbuffered, echoless, blocking. For non-blocking, use a separate
+         * thread.
+         */
+        inline IO &operator>>(char *&str_var);
 
-    inline IO();
-    inline IO(ostream &out);
-    inline IO(wostream &wout);
-
-    // output operations
-
-    /** Prints a string to the terminal and interprets any color codes found */
-    inline IO &operator<<(string text);
-    /** Prints a character to the terminal */
-    inline IO &operator<<(const char &letter);
-    /** Prints an integer to the terminal */
-    inline IO &operator<<(const int &number);
-    /** Prints a double to the terminal */
-    inline IO &operator<<(const double &number);
-
-    // special output operations
-
-    /** Moves the terminal's cursor to a row/column specified
-     * by a Point object. */
-    inline IO &operator<<(const Point &point);
-    /** Changes the color of the terminal to the foreground and
-     * background specified by the Color object. */
-    inline IO &operator<<(const Color &color);
-    /** Executes a command object. */
-    inline IO &operator<<(Command &command);
-
-    // input operations
-    /** Gets a single character from stdin. Input is unbuffered, echoless,
-     * blocking. For non-blocking, use a separate thread. */
-    inline IO &operator>>(unsigned char &ch_var);
-    inline IO &operator>>(char &ch_var);
-    /** Gets a single key from stdin (characters or arrow keys). Input is
-     * unbuffered, echoless, blocking. For non-blocking, use a separate
-     * thread. */
-    inline IO &operator>>(char *&str_var);
-
-private:
-    ostream *out;
-    wostream *wout;
-    bool wide;
-    inline void set_color(Color c);
+    private:
+        ostream *out;
+        wostream *wout;
+        bool wide;
+        inline void set_color(Color c);
 
 #if defined(WINDOWS)
-    bool windows_setup;
-    HANDLE stdin_terminal;
-    HANDLE stdout_terminal;
-    inline void setupWindows();
+        bool windows_setup;
+        HANDLE stdin_terminal;
+        HANDLE stdout_terminal;
+        inline void setupWindows();
 #endif
-};
+    };
 } // namespace trio
 // For compatibility with older TrIO programs
 namespace Term = trio;
@@ -465,76 +437,17 @@ std::string trio::replace_all(string text, string from, string to)
 }
 
 /**
- * It is easier to consistently pass in strings instead of keeping track of
- * wide vs narrow strings. So, we will overload << to make wostreams able to
- * work with strings (by converting them inside the operation to wstring)
- * @param wout the wide ostream to be output to
- * @param text the text to be converted to a wstring
- * @return the same wostream being used (for chaining output statements)
- */
-std::wostream &trio::operator<<(wostream &wout, string text)
-{
-    /**
-     * create a string <-> wide string converter
-     * example from stack overflow
-     * std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
-     * std::string narrow = converter.to_bytes(wide_utf16_source_string);
-     * std::wstring wide = converter.from_bytes(narrow_utf8_source_string);
-     */
-    std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
-    std::wstring wide_text = converter.from_bytes(text);
-    wout << wide_text;
-    return wout;
-}
-
-/*  a88888b.                                                        dP     .88888.  dP       oo          
- * d8'   `88                                                        88    d8'   `8b 88                   
- * 88        .d8888b. 88d8b.d8b. 88d8b.d8b. .d8888b. 88d888b. .d888b88    88     88 88d888b. dP .d8888b. 
- * 88        88'  `88 88'`88'`88 88'`88'`88 88'  `88 88'  `88 88'  `88    88     88 88'  `88 88 Y8ooooo. 
- * Y8.   .88 88.  .88 88  88  88 88  88  88 88.  .88 88    88 88.  .88    Y8.   .8P 88.  .88 88       88 
- *  Y88888P' `88888P' dP  dP  dP dP  dP  dP `88888P8 dP    dP `88888P8     `8888P'  88Y8888' 88 `88888P' 
- * oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo88~ooooooooo
- *                                                                                           dP          
- * Nancyj-Underlined font
- * http://patorjk.com/software/taag/
- */
-
-trio::Sleep::Sleep() {}
-
-trio::Sleep &trio::Sleep::get()
-{
-    static Sleep instance;
-    return instance;
-}
-
-/**
- * Sets how many ms the thread should sleep
- * when using the sleep object.
+ * Makes the program (or rather, current thread) stop executing and wait
+ * a specified length of time before continuing
  * @param ms how much time, in miliseconds (1/1000 of a second), the
- * program should sleep when this object is passed to an IO object.
+ * program should sleep
  */
-trio::Sleep &trio::Sleep::operator()(int ms)
-{
-    this->ms = ms;
-    return get();
-}
-
-/** Stops the thread (or program, if single-threaded) for a number of
- * milliseconds determined by the data member of this object. */
-void trio::Sleep::call()
+void trio::sleep_ms(int ms)
 {
     std::this_thread::sleep_for(std::chrono::milliseconds(ms));
 }
 
-trio::Clear::Clear() {}
-
-trio::Clear &trio::Clear::get()
-{
-    static Clear instance;
-    return instance;
-}
-
-void trio::Clear::call()
+void trio::clear_screen()
 {
 #if defined(WINDOWS)
     // The Windows version of this method comes almost character-for-character
@@ -565,8 +478,33 @@ void trio::Clear::call()
     SetConsoleCursorPosition(hConsole, coordScreen);
 #else
     // on *nix use ANSI escape
-    std::cout << "\033[2J";
+    std::cout << "\033[2J" << std::flush;
+    // Return cursor to position 0,0 after clearing screen
+    std::cout << "\033[1;1f" << std::flush;
 #endif
+}
+
+/**
+ * It is easier to consistently pass in strings instead of keeping track of
+ * wide vs narrow strings. So, we will overload << to make wostreams able to
+ * work with strings (by converting them inside the operation to wstring)
+ * @param wout the wide ostream to be output to
+ * @param text the text to be converted to a wstring
+ * @return the same wostream being used (for chaining output statements)
+ */
+std::wostream &trio::operator<<(wostream &wout, string text)
+{
+    /**
+     * create a string <-> wide string converter
+     * example from stack overflow
+     * std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+     * std::string narrow = converter.to_bytes(wide_utf16_source_string);
+     * std::wstring wide = converter.from_bytes(narrow_utf8_source_string);
+     */
+    std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+    std::wstring wide_text = converter.from_bytes(text);
+    wout << wide_text;
+    return wout;
 }
 
 /*  888888ba           oo            dP      8888ba.88ba             dP   dP                      dP          
@@ -623,6 +561,10 @@ trio::Color::Color(const unsigned short &fg, const unsigned short &bg)
  * http://patorjk.com/software/taag/
  */
 
+/**
+ * Default constructor for the IO object.
+ * By default, IO uses a wide stream on Windows and a normal stream on *nix
+ */
 trio::IO::IO()
 {
 #if defined(WINDOWS)
@@ -683,19 +625,19 @@ trio::IO &trio::IO::operator>>(unsigned char &ch_var)
     char buf = 0;
     struct termios old = {0};
     if (tcgetattr(0, &old) < 0)
-            perror("tcsetattr()");
+        perror("tcsetattr()");
     old.c_lflag &= ~ICANON;
     old.c_lflag &= ~ECHO;
     old.c_cc[VMIN] = 1;
     old.c_cc[VTIME] = 0;
     if (tcsetattr(0, TCSANOW, &old) < 0)
-            perror("tcsetattr ICANON");
+        perror("tcsetattr ICANON");
     if (read(0, &buf, 1) < 0)
-            perror ("read()");
+        perror("read()");
     old.c_lflag |= ICANON;
     old.c_lflag |= ECHO;
     if (tcsetattr(0, TCSADRAIN, &old) < 0)
-            perror ("tcsetattr ~ICANON");
+        perror("tcsetattr ~ICANON");
     ch_var = buf;
 
 #endif
@@ -751,8 +693,7 @@ trio::IO &trio::IO::operator<<(string text)
     text = replace_all(text, "&&", '&' + string(1, char(0)));
 
     // Split the string by "&XY" with X and Y as numeric color codes
-    vector<string>
-        strings = rsplit(text, "&[0-8][0-8]", true);
+    vector<string> strings = rsplit(text, "&[0-8][0-8]", true);
 
     // Print each line of the vector
     for (int i = 0; i < strings.size(); i++)
@@ -777,9 +718,10 @@ trio::IO &trio::IO::operator<<(string text)
             // their entirety, other strings we need to skip the first 3 chars
             // which are the color code.
             if (strings[i].size() > 3 && i > 0)
-                *wout << strings[i].substr(3);
+                // substr() let's us skip to position 3
+                *wout << strings[i].substr(3) << std::flush;
             else
-                *wout << strings[i];
+                *wout << strings[i] << std::flush;
         }
         else
         {
@@ -789,11 +731,12 @@ trio::IO &trio::IO::operator<<(string text)
             // their entirety, other strings we need to skip the first 3 chars
             // which are the color code.
             if (strings[i].size() > 3 && i > 0)
-                *out << strings[i].substr(3);
+                // substr() let's us skip to position 3
+                *out << strings[i].substr(3) << std::flush;
             else
-                *out << strings[i];
+                *out << strings[i] << std::flush;
         }
-
+        // Reset to the default color after printing
         set_color(Color(0, 0));
     }
 
@@ -816,11 +759,11 @@ trio::IO &trio::IO::operator<<(const char &letter)
 
     if (wide)
     {
-        *wout << letter;
+        *wout << letter << std::flush;
     }
     else
     {
-        *out << letter;
+        *out << letter << std::flush;
     }
     return *this;
 }
@@ -840,11 +783,11 @@ trio::IO &trio::IO::operator<<(const int &number)
 
     if (wide)
     {
-        *wout << number;
+        *wout << number << std::flush;
     }
     else
     {
-        *out << number;
+        *out << number << std::flush;
     }
     return *this;
 }
@@ -864,11 +807,11 @@ trio::IO &trio::IO::operator<<(const double &number)
 
     if (wide)
     {
-        *wout << number;
+        *wout << number << std::flush;
     }
     else
     {
-        *out << number;
+        *out << number << std::flush;
     }
     return *this;
 }
@@ -909,7 +852,7 @@ trio::IO &trio::IO::operator<<(const Point &point)
     int c = point.col + 1;
     // on *nix use ANSI escape
     std::string pos = "\033[" + std::to_string(r) + ';' + std::to_string(c) + 'f';
-    std::cout << pos;
+    std::cout << pos << std::flush;
 #endif
     return *this;
 }
@@ -928,40 +871,74 @@ trio::IO &trio::IO::operator<<(const Color &color)
 }
 
 /**
- * Executes a command object.
- * @param command the command to use .call() on.
- * @return this object, for chaining outputs.
+ * Sets the terminal color using a color object
+ * @param c the color configuration to use on the terminal
  */
-trio::IO &trio::IO::operator<<(Command &command)
-{
-    command.call();
-    return *this;
-}
-
 void trio::IO::set_color(Color c)
 {
+    // TrIO color codes are
+    // 0: Default, 1: Black, 2: Red, 3: Yellow, 4: Green, 5: Blue, 6: Cyan,
+    // 7: Magenta, 8: White
 #if defined(WINDOWS)
+    // These arrays map Trio color codes to Windows color values
+    // For instance, 2 is Trio red, and at index 2 in the array
+    // we have 4, which is Window's code for red
     static const unsigned short _fg[] = {7, 0, 4, 6, 2, 1, 3, 5, 7};
+    // Windows does it's codes kind of weird. The background color is defined by
+    // 16 * the foreground's code. (red=4, bg for red is 64)
+    // Then to actually set the color in windows, we will add the foreground and
+    // background color.
     static const unsigned short _bg[] = {0, 0, 64, 96, 32, 16, 48, 80, 112};
 #else
+    // These are the ansi code equivalents to Trio color codes
+    // TrIO color codes are
+    // 0: Default, 1: Black, 2: Red, 3: Yellow, 4: Green, 5: Blue, 6: Cyan,
+    // 7: Magenta, 8: White
+    // These arrays map Trio color codes to ANSI color codes
+    // For instance, 2 is Trio red, and at index 2 in the array
+    // we have 31, which is ANSI's code for red foreground
     static const unsigned short _fg[] = {39, 30, 31, 33, 32, 34, 36, 35, 37};
     static const unsigned short _bg[] = {49, 40, 41, 43, 42, 44, 46, 45, 47};
 #endif
 
 #if defined(WINDOWS)
+    // We always need to make sure the Windows terminal is configured
+    // before we perform any kind of operations on it
     if (!windows_setup)
         setupWindows();
+    // Setting the color by adding the foreground and background colors
+    // Modifies our stdout terminal
     SetConsoleTextAttribute(stdout_terminal, _fg[c.fg] + _bg[c.bg]);
 #else
+    // Print a sequence of ansi characters to color the terminal
     if (wide)
     {
-        *wout << "\033[" + to_string(_fg[c.fg]) + to_string(_bg[c.bg]) + 'm';
+        // If we are using wide streams, we use wout
+        *wout << "\033[" + to_string(_fg[c.fg]) + to_string(_bg[c.bg]) + 'm' << std::flush;
     }
     else
     {
-        *out << "\033[" + to_string(_fg[c.fg]) + ';' + to_string(_bg[c.bg]) + 'm';
+        *out << "\033[" + to_string(_fg[c.fg]) + ';' + to_string(_bg[c.bg]) + 'm' << std::flush;
     }
 #endif
+}
+
+/**
+ * Calls sleep and returns IO object which allows us
+ * to include waiting in output chains
+ * @param ms the time in miliseconds to sleep
+ * @return the IO object which this method is called from
+ */
+trio::IO &trio::IO::sleep(int ms)
+{
+    trio::sleep_ms(ms);
+    return *this;
+}
+
+trio::IO &trio::IO::clear()
+{
+    trio::clear_screen();
+    return *this;
 }
 
 #if defined(WINDOWS)

@@ -8,7 +8,7 @@
 
 int main()
 {
-    Term::IO io;
+    trio::IO io;
     Cell **grid;
     int rows, cols;
     // Get the mode to run in (file or random)
@@ -37,30 +37,30 @@ int main()
         exit(1);
     }
     connectNeighbors(grid, rows, cols);
-    io << Term::Point(rows, 0) << "Gen #1";
+    io << trio::Point(rows, 0) << "Gen #1";
 
     // run the generations
     bool stabilized = false;
     for (int i = 1; i < gens && !stabilized; i++)
     {
-        io << Term::sleep(50);
+        trio::sleep_ms(50);
         stabilized = checkGrid(grid, rows, cols);
         printGrid(grid, rows, cols, true);
-        io << Term::Point(rows, 0) << "Gen #" << i + 1;
+        io << trio::Point(rows, 0) << "Gen #" << i + 1;
         nextGen(grid, rows, cols);
     }
 }
 
 void printGrid(Cell **grid, int rows, int cols, bool skipStable)
 {
-    Term::IO io;
+    trio::IO io;
     for (int r = 0; r < rows; r++)
     {
         for (int c = 0; c < cols; c++)
         {
             if (!skipStable || !grid[r][c].isStable())
             {
-                io << Term::Point(r, c);
+                io << trio::Point(r, c);
                 grid[r][c].print(false);
             }
         }
